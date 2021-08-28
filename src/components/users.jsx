@@ -1,28 +1,9 @@
-import React, { useState } from "react";
-import api from "../api";
+import React from "react";
+import User from "./user";
 
-const Users = () => {
-  const [users, setUsers] = useState(api.users.fetchAll());
-  console.log(users);
-
-  const handleDelete = userId => {
-    console.log(userId);
-    setUsers(users.filter(user => user._id != userId.id));
-  };
-  const renderPhrase = number => {
-    if (number === 0)
-      return <span className="badge bg-danger">Никто с тобой не тусанет</span>;
-    return (
-      <span className="badge bg-primary">
-        {number} человек{" "}
-        {number <= 4 && number != 1 ? "a тусанет " : "тусанут "} с тобой сегодня
-      </span>
-    );
-  };
+const Users = ({ users, onDelete, onToggleBookmark }) => {
   return (
     <>
-      <h2>{renderPhrase(users.length)}</h2>
-
       {users.length > 0 && (
         <table className="table">
           <thead>
@@ -32,37 +13,18 @@ const Users = () => {
               <th scope="col">Профессия</th>
               <th scope="col">Встретился, раз</th>
               <th scope="col">Оценка</th>
+              <th scope="col">Избранное</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
             {users.map(user => (
-              <tr key={user._id}>
-                <td>{user.name}</td>
-                <td>
-                  {user.qualities.map(item => (
-                    <span
-                      key={item.color}
-                      className={"me-2 badge bg-" + item.color}
-                    >
-                      {item.name}
-                    </span>
-                  ))}
-                </td>
-                <td>{user.profession.name}</td>
-                <td>{user.completedMeetings}</td>
-                <td>{user.rate}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      handleDelete({ id: user._id });
-                    }}
-                    className="btn btn-danger"
-                  >
-                    delete
-                  </button>
-                </td>
-              </tr>
+              <User
+                key={user._id}
+                user={user}
+                onDelete={onDelete}
+                onToggleBookmark={onToggleBookmark}
+              />
             ))}
           </tbody>
         </table>
