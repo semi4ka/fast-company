@@ -1,3 +1,3 @@
-export const stopDefAction = evt => {
-  evt.preventDefault();
+export const stopDefAction = (evt) => {
+    evt.preventDefault();
 };
