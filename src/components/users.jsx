@@ -18,7 +18,6 @@ const Users = ({ users: allUsers, onDelete, onToggleBookmark }) => {
         setSelectedProf(item);
     };
     const handlePageChange = pageIndex => {
-        console.log(pageIndex);
         setCurrentPage(pageIndex);
     };
 
@@ -33,9 +32,9 @@ const Users = ({ users: allUsers, onDelete, onToggleBookmark }) => {
     }, [selectedProf]);
 
     const filteredUsers = selectedProf
-        ? allUsers.filter(user => user.profession === selectedProf)
+        ? allUsers.filter(user => user.profession._id === selectedProf._id)
         : allUsers;
-    const count = filteredUsers.length;
+    const count = filteredUsers ? filteredUsers.length : 0;
 
     const users = paginate(filteredUsers, currentPage, pageSize);
 
