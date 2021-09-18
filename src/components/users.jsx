@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import GroupList from "./groupList";
 import api from "../api";
 import SearchStatus from "./searchStatus";
+import _ from "lodash";
 
 const Users = ({ users: allUsers, onDelete, onToggleBookmark }) => {
     const pageSize = 2;
@@ -32,7 +33,7 @@ const Users = ({ users: allUsers, onDelete, onToggleBookmark }) => {
     }, [selectedProf]);
 
     const filteredUsers = selectedProf
-        ? allUsers.filter(user => user.profession._id === selectedProf._id)
+        ? allUsers.filter(user => _.isEqual(user.profession, selectedProf))
         : allUsers;
     const count = filteredUsers ? filteredUsers.length : 0;
 
