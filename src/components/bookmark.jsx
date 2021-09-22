@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "bootstrap-icons/font/bootstrap-icons.css";
-const Bookmarck = ({ onToggleBookmark, userId, isFavorite }) => {
+const Bookmark = ({ onToggleBookmark, userId, isFavorite }) => {
     return (
         <a
             href="/"
@@ -14,9 +14,9 @@ const Bookmarck = ({ onToggleBookmark, userId, isFavorite }) => {
         </a>
     );
 };
-Bookmarck.propTypes = {
+Bookmark.propTypes = {
     isFavorite: PropTypes.bool.isRequired,
     onToggleBookmark: PropTypes.func.isRequired,
     userId: PropTypes.string.isRequired
 };
-export default Bookmarck;
+export default Bookmark;
