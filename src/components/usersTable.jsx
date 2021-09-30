@@ -13,7 +13,11 @@ const UsersTable = ({
     ...rest
 }) => {
     const columns = {
-        name: { path: "name", name: "Имя" },
+        name: {
+            path: "name",
+            name: "Имя",
+            component: user => <a href={"/users/" + user._id}>{user.name}</a>
+        },
         qualities: {
             name: "Качества",
             component: user => <QualitiesList qualities={user.qualities} />

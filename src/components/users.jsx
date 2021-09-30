@@ -16,7 +16,7 @@ const Users = () => {
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState();
     useEffect(() => {
         api.users.fetchAll().then(data => {
             setUsers(data);
@@ -61,7 +61,7 @@ const Users = () => {
         const filteredUsers = selectedProf
             ? users.filter(user => _.isEqual(user.profession, selectedProf))
             : users;
-        const count = filteredUsers ? filteredUsers.length : 0;
+        const count = filteredUsers.length;
         const sortedUser = _.orderBy(
             filteredUsers,
             [sortBy.path],

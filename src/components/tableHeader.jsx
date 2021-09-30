@@ -3,15 +3,6 @@ import PropTypes from "prop-types";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const TableHeader = ({ onSort, selectedSort, columns }) => {
-    const caret = (
-        <i
-            className={
-                "bi bi-caret-" +
-                (selectedSort.order === "asc" ? "up" : "down") +
-                "-fill"
-            }
-        ></i>
-    );
     const handleSort = item => {
         if (selectedSort.path === item) {
             onSort({
@@ -20,6 +11,19 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
             });
         } else {
             onSort({ path: item, order: "asc" });
+        }
+    };
+    const caret = path => {
+        if (path === selectedSort.path) {
+            return (
+                <i
+                    className={
+                        "bi bi-caret-" +
+                        (selectedSort.order === "asc" ? "up" : "down") +
+                        "-fill"
+                    }
+                ></i>
+            );
         }
     };
     return (
@@ -38,7 +42,7 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                     >
                         {columns[column].name}
 
-                        {columns[column].path === selectedSort.path && caret}
+                        {caret(columns[column].path)}
                     </th>
                 ))}
             </tr>
