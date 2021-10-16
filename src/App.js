@@ -2,9 +2,9 @@ import React from "react";
 import Users from "./components/users";
 import { Route, Switch } from "react-router-dom";
 import NavBar from "./components/navBar";
-import MainPage from "./components/mainPage";
-import LoginPage from "./components/loginPage";
-import UserPage from "./components/userPage";
+import LoginPage from "./layouts/loginPage";
+import UserPage from "./layouts/userPage";
+import MainPage from "./layouts/mainPage";
 
 const App = () => {
     return (
