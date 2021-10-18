@@ -19,6 +19,7 @@ const Users = () => {
 
     const [users, setUsers] = useState();
     const [searchUsers, setSearchUsers] = useState(null);
+    const [searchVal, setSearchVal] = useState("");
 
     useEffect(() => {
         api.users.fetchAll().then(data => {
@@ -41,6 +42,7 @@ const Users = () => {
     };
     const resetSearch = () => {
         setSearchUsers(null);
+        setSearchVal("");
     };
     const handleProfessionSale = item => {
         resetSearch();
@@ -69,6 +71,7 @@ const Users = () => {
         if (selectedProf) {
             clearFilter();
         }
+        setSearchVal(target.value);
         const foundUsers = users.filter(user =>
             user.name.includes(target.value)
         );
@@ -112,7 +115,7 @@ const Users = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus numberUsers={count} />
-                    <Search onSearch={handleSearch} />
+                    <Search onSearch={handleSearch} value={searchVal} />
                     {count > 0 && (
                         <UsersTable
                             users={usersCrop}
