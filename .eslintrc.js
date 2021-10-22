@@ -13,13 +13,15 @@ module.exports = {
     },
     plugins: ["react"],
     rules: {
+        "multiline-ternary": ["off"],
         indent: [
-            "error",
-            4,
-            {
-                SwitchCase: 1,
-                ignoredNodes: ["ConditionalExpression"]
-            }
+            "off"
+            // "error",
+            // 4,
+            // {
+            //     SwitchCase: 1,
+            //     ignoredNodes: ["ConditionalExpression"]
+            // }
         ],
         semi: [2, "always"],
         "space-before-function-paren": [

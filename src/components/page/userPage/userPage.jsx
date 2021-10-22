@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import api from "../api";
-import Quality from "../components/quality";
+import { useHistory } from "react-router-dom";
+import api from "../../../api";
+import Quality from "../../ui/qualities/quality";
+import PropTypes from "prop-types";
 
-const UserPage = () => {
+const UserPage = ({ userId }) => {
     const history = useHistory();
     const [user, setUser] = useState();
-    const params = useParams();
-    const { userId } = params;
 
     useEffect(() => {
         api.users.getById(userId).then(data => {
@@ -39,5 +38,7 @@ const UserPage = () => {
     }
     return "Loading...";
 };
-
+UserPage.propTypes = {
+    userId: PropTypes.string
+};
 export default UserPage;
