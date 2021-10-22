@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import api from "../../../api";
 import Quality from "../../ui/qualities/quality";
 import PropTypes from "prop-types";
 
 const UserPage = ({ userId }) => {
     const history = useHistory();
+    const location = useLocation();
     const [user, setUser] = useState();
 
     useEffect(() => {
@@ -16,6 +17,7 @@ const UserPage = ({ userId }) => {
     const handleBack = () => {
         history.push("/users");
     };
+
     if (user) {
         return (
             <div className="container">
@@ -33,6 +35,12 @@ const UserPage = ({ userId }) => {
                 <button onClick={handleBack} className="btn btn-primary">
                     All users
                 </button>
+                <a
+                    href={location.pathname + "/edit"}
+                    className="btn btn-primary"
+                >
+                    Edit
+                </a>
             </div>
         );
     }
