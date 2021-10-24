@@ -6,12 +6,15 @@ import TextField from "../../common/form/textField";
 import SelectField from "../../common/form/selectField";
 import RadioField from "../../common/form/radio.Field";
 import MultiSelectField from "../../common/form/multiSelectField";
+import { useHistory } from "react-router-dom";
 
 const EditUserPage = ({ userId }) => {
-    const [data, setData] = useState({});
-    const [qualities, setQualities] = useState({});
+    const [data, setData] = useState();
+    const [qualities, setQualities] = useState();
     const [errors, setErrors] = useState({});
     const [professions, setProfessions] = useState([]);
+
+    const history = useHistory();
 
     useEffect(() => {
         api.professions.fetchAll().then(data => {
@@ -22,8 +25,9 @@ const EditUserPage = ({ userId }) => {
         });
         api.users.getById(userId).then(data => {
             setData({
+                name: data.name,
                 email: data.email,
-                profession: data.profession.name,
+                profession: data.profession._id,
                 sex: data.sex,
                 qualities: data.qualities.map(quality => ({
                     label: quality.name,
@@ -39,6 +43,9 @@ const EditUserPage = ({ userId }) => {
         },
         profession: {
             isRequired: { message: "Поле обязательное для заполнения" }
+        },
+        name: {
+            isRequired: { message: "Поле обязательное для заполнения" }
         }
     };
     const handleChange = target => {
@@ -48,7 +55,6 @@ const EditUserPage = ({ userId }) => {
         }));
     };
     useEffect(() => {
-        console.log(data);
         validate();
     }, [data]);
     const validate = () => {
@@ -62,12 +68,51 @@ const EditUserPage = ({ userId }) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        console.log(data);
+
+        const fullData = {
+            ...data,
+            profession: getProfessionFull(),
+            qualities: getQualitiesFull()
+        };
+        api.users
+            .update(userId, fullData)
+            .then(id => {
+                console.log(id);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        history.push("/users/" + userId);
     };
-    if (data && qualities && professions) {
+    const getProfessionFull = () => {
+        for (const key in professions) {
+            if (professions[key]._id === data.profession) {
+                return professions[key];
+            }
+        }
+    };
+    const getQualitiesFull = () => {
+        const res = [];
+        data.qualities.forEach(quality => {
+            for (const key in qualities) {
+                if (qualities[key]._id === quality.value) {
+                    res.push(qualities[key]);
+                }
+            }
+        });
+        return res;
+    };
+    if (data && qualities) {
         return (
             <div className="container">
                 <form onSubmit={handleSubmit}>
+                    <TextField
+                        label="Имя"
+                        name="name"
+                        value={data.name}
+                        onChange={handleChange}
+                        error={errors.name}
+                    />
                     <TextField
                         label="Email"
                         name="email"
@@ -107,7 +152,7 @@ const EditUserPage = ({ userId }) => {
                         className="btn btn-primary w-100 mx-auto"
                         disabled={!isValid}
                     >
-                        Submit
+                        Update
                     </button>
                 </form>
             </div>
