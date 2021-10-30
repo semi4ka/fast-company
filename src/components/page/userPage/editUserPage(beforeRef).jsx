@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { validator } from "../../../utils/validator";
 import api from "../../../api";
 import TextField from "../../common/form/textField";
@@ -9,36 +10,33 @@ import { useHistory, useParams } from "react-router-dom";
 
 const EditUserPage = () => {
     const { userId } = useParams();
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState({
-        name: "",
-        email: "",
-        profession: "",
-        sex: "male",
-        qualities: []
-    });
-    const [qualities, setQualities] = useState({});
+    const [data, setData] = useState();
+    const [qualities, setQualities] = useState();
     const [errors, setErrors] = useState({});
     const [professions, setProfessions] = useState([]);
 
     const history = useHistory();
 
     useEffect(() => {
-        api.users.getById(userId).then(({ profession, ...data }) => {
-            setData(prevState => ({
-                ...prevState,
-                ...data,
-                profession: profession._id
-            }));
+        api.professions.fetchAll().then(data => {
+            setProfessions(data);
         });
-        api.professions.fetchAll().then(data => setProfessions(data));
-        api.qualities.fetchAll().then(data => setQualities(data));
+        api.qualities.fetchAll().then(data => {
+            setQualities(data);
+        });
+        api.users.getById(userId).then(data => {
+            setData({
+                name: data.name,
+                email: data.email,
+                profession: data.profession._id,
+                sex: data.sex,
+                qualities: data.qualities.map(quality => ({
+                    label: quality.name,
+                    value: quality._id
+                }))
+            });
+        });
     }, []);
-
-    useEffect(() => {
-        if (data._id) setIsLoading(false);
-        validate();
-    }, [data]);
     const validatorConfig = {
         email: {
             isRequired: { message: "Емаил обязателен" },
@@ -57,6 +55,9 @@ const EditUserPage = () => {
             [target.name]: target.value
         }));
     };
+    useEffect(() => {
+        validate();
+    }, [data]);
     const validate = () => {
         const errors = validator(data, validatorConfig);
         setErrors(errors);
@@ -68,25 +69,27 @@ const EditUserPage = () => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        const { profession, qualities } = data;
+
         const fullData = {
             ...data,
-            profession: getProfessionById(profession),
-            qualities: getQualitiesFull(qualities)
+            profession: getProfessionFull(),
+            qualities: getQualitiesFull()
         };
         api.users
             .update(userId, fullData)
-            .then(data => {
-                history.push("/users/" + data._id);
+            .then(id => {
+                console.log(id);
             })
             .catch(err => {
                 console.log(err);
             });
+        history.push("/users/" + userId);
     };
-    const getProfessionById = id => {
+    const getProfessionFull = () => {
         for (const key in professions) {
-            const profData = professions[key];
-            if (profData._id === id) return profData;
+            if (professions[key]._id === data.profession) {
+                return professions[key];
+            }
         }
     };
     const getQualitiesFull = () => {
@@ -100,9 +103,9 @@ const EditUserPage = () => {
         });
         return res;
     };
-    return (
-        <div className="container">
-            {!isLoading && Object.keys(professions).length > 0 ? (
+    if (data && qualities) {
+        return (
+            <div className="container">
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Имя"
@@ -153,11 +156,12 @@ const EditUserPage = () => {
                         Update
                     </button>
                 </form>
-            ) : (
-                "loading..."
-            )}
-        </div>
-    );
+            </div>
+        );
+    }
+    return "Loading...";
 };
-
+EditUserPage.propTypes = {
+    userId: PropTypes.string
+};
 export default EditUserPage;

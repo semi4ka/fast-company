@@ -18,8 +18,7 @@ const UsersListPage = () => {
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
     const [users, setUsers] = useState();
-    const [searchUsers, setSearchUsers] = useState(null);
-    const [searchVal, setSearchVal] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         api.users.fetchAll().then(data => {
@@ -41,8 +40,7 @@ const UsersListPage = () => {
         setUsers(newUsers);
     };
     const resetSearch = () => {
-        setSearchUsers(null);
-        setSearchVal("");
+        setSearchQuery("");
     };
     const handleProfessionSale = item => {
         resetSearch();
@@ -63,7 +61,7 @@ const UsersListPage = () => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf, searchUsers]);
+    }, [selectedProf, searchQuery]);
     const clearFilter = () => {
         setSelectedProf();
     };
@@ -71,21 +69,20 @@ const UsersListPage = () => {
         if (selectedProf) {
             clearFilter();
         }
-        setSearchVal(target.value);
-        const foundUsers = users.filter(user =>
-            user.name.includes(target.value)
-        );
-        setSearchUsers(foundUsers);
+        setSearchQuery(target.value);
     };
 
     if (users) {
-        const isSearch = searchUsers !== null;
+        const isSearch = searchQuery !== null;
         const filteredUsers =
             (selectedProf &&
                 users.filter(user =>
                     _.isEqual(user.profession, selectedProf)
                 )) ||
-            (isSearch && searchUsers) ||
+            (isSearch &&
+                users.filter(user =>
+                    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )) ||
             users;
 
         const count = filteredUsers.length;
@@ -115,7 +112,7 @@ const UsersListPage = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus numberUsers={count} />
-                    <Search onSearch={handleSearch} value={searchVal} />
+                    <Search onSearch={handleSearch} value={searchQuery} />
                     {count > 0 && (
                         <UsersTable
                             users={usersCrop}
