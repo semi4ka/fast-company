@@ -8,6 +8,7 @@ import SearchStatus from "../../ui/searchStatus";
 import _ from "lodash";
 import UsersTable from "../../ui/usersTable";
 import Search from "../../ui/search";
+import { useUser } from "../../../hooks/useUsers";
 
 const UsersListPage = () => {
     const pageSize = 8;
@@ -17,44 +18,38 @@ const UsersListPage = () => {
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
 
-    const [users, setUsers] = useState();
+    const { users } = useUser();
     const [searchQuery, setSearchQuery] = useState("");
 
-    useEffect(() => {
-        api.users.fetchAll().then(data => {
-            setUsers(data);
-        });
-    }, []);
-
-    const handleDelete = userId => {
-        setUsers(users.filter(user => user._id !== userId.id));
+    const handleDelete = (userId) => {
+        console.log(userId);
     };
-    const handleToggleBookmark = userId => {
+    const handleToggleBookmark = (userId) => {
         const newUsers = [...users];
-        const elementIndex = newUsers.findIndex(item => item._id === userId);
+        const elementIndex = newUsers.findIndex((item) => item._id === userId);
         if (newUsers[elementIndex].bookmark) {
             newUsers[elementIndex].bookmark = false;
         } else {
             newUsers[elementIndex].bookmark = true;
         }
-        setUsers(newUsers);
+        console.log(newUsers);
     };
     const resetSearch = () => {
         setSearchQuery("");
     };
-    const handleProfessionSale = item => {
+    const handleProfessionSale = (item) => {
         resetSearch();
         setSelectedProf(item);
     };
-    const handlePageChange = pageIndex => {
+    const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
 
-    const handleSort = item => {
+    const handleSort = (item) => {
         setSortBy(item);
     };
     useEffect(() => {
-        api.professions.fetchAll().then(data => {
+        api.professions.fetchAll().then((data) => {
             setProfessions(data);
         });
     }, [currentPage]);
@@ -76,11 +71,11 @@ const UsersListPage = () => {
         const isSearch = searchQuery !== null;
         const filteredUsers =
             (selectedProf &&
-                users.filter(user =>
+                users.filter((user) =>
                     _.isEqual(user.profession, selectedProf)
                 )) ||
             (isSearch &&
-                users.filter(user =>
+                users.filter((user) =>
                     user.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )) ||
             users;

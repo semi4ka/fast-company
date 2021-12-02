@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import BookMark from "../common/bookmark";
 import Qualities from "./qualities";
 import Table from "../common/table";
+import Profession from "./profession";
 
 const UsersTable = ({
     users,
@@ -16,19 +17,22 @@ const UsersTable = ({
         name: {
             path: "name",
             name: "Имя",
-            component: user => <a href={"/users/" + user._id}>{user.name}</a>
+            component: (user) => <a href={"/users/" + user._id}>{user.name}</a>
         },
         qualities: {
             name: "Качества",
-            component: user => <Qualities qualities={user.qualities} />
+            component: (user) => <Qualities qualities={user.qualities} />
         },
-        professions: { path: "profession.name", name: "Профессия" },
+        professions: {
+            name: "Профессия",
+            component: (user) => <Profession id={user.profession} />
+        },
         completedMeetings: { path: "completedMeetings", name: "Профессия" },
         rate: { path: "rate", name: "Оценка" },
         bookmark: {
             path: "bookmark",
             name: "Избранное",
-            component: user => (
+            component: (user) => (
                 <BookMark
                     userId={user._id}
                     isFavorite={user.bookmark ? user.bookmark : false}
@@ -37,7 +41,7 @@ const UsersTable = ({
             )
         },
         delete: {
-            component: user => (
+            component: (user) => (
                 <button
                     onClick={() => {
                         onDelete({ id: user._id });
