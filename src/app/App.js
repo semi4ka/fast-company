@@ -12,19 +12,21 @@ const App = () => {
     return (
         <>
             <NavBar />
-            <Switch>
-                <ProfessionProvider>
-                    <QualityProvider>
+
+            <ProfessionProvider>
+                <QualityProvider>
+                    <Switch>
                         <Route
                             path="/users/:userId?/:edit?"
                             component={Users}
                         />
                         <Route path="/login/:type?" component={Login} />
-                    </QualityProvider>
-                </ProfessionProvider>
-                <Route exact path="/" component={Main} />
-                <Redirect to="/" />
-            </Switch>
+                        <Route exact path="/" component={Main} />
+                        <Redirect to="/" />
+                    </Switch>
+                </QualityProvider>
+            </ProfessionProvider>
+
             <ToastContainer />
         </>
     );
