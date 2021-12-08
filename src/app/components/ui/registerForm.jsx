@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import TextField from "../common/form/textField";
 import { validator } from "../../utils/validator";
-import api from "../../api";
 import SelectField from "../common/form/selectField";
 import RadioField from "../common/form/radio.Field";
 import MultiSelectField from "../common/form/multiSelectField";
 import CheckBoxField from "../common/form/checkBoxField";
+import { useQuality } from "../../hooks/useQuality";
+import { useProfession } from "../../hooks/useProffesion";
+import { useAuth } from "../../hooks/useAuth";
+import { useHistory } from "react-router-dom";
 
 const RegisterForm = () => {
+    const history = useHistory();
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -16,21 +20,17 @@ const RegisterForm = () => {
         qualities: [],
         licence: false
     });
-    const [qualities, setQualities] = useState({});
+    const { qualities } = useQuality();
+    const qualitiesList = qualities.map((q) => ({
+        label: q.name,
+        value: q._id
+    }));
     const [errors, setErrors] = useState({});
-    const [professions, setProfessions] = useState([]);
+    const { professions } = useProfession();
+    const { signUp } = useAuth();
 
-    useEffect(() => {
-        api.professions.fetchAll().then(data => {
-            setProfessions(data);
-        });
-        api.qualities.fetchAll().then(data => {
-            setQualities(data);
-        });
-    }, []);
-
-    const handleChange = target => {
-        setData(prevState => ({
+    const handleChange = (target) => {
+        setData((prevState) => ({
             ...prevState,
             [target.name]: target.value
         }));
@@ -71,11 +71,20 @@ const RegisterForm = () => {
     };
 
     const isValid = Object.keys(errors).length === 0;
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        console.log(data);
+        const newData = {
+            ...data,
+            qualities: data.qualities.map((q) => q.value)
+        };
+        try {
+            await signUp(newData);
+            history.push("/");
+        } catch (error) {
+            setErrors(error);
+        }
     };
 
     return (
@@ -116,7 +125,7 @@ const RegisterForm = () => {
                 onChange={handleChange}
             />
             <MultiSelectField
-                options={qualities}
+                options={qualitiesList}
                 onChange={handleChange}
                 label="Выберите ваши качества"
                 name="qualities"
