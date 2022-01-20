@@ -15,6 +15,7 @@ const RegisterForm = () => {
     const [data, setData] = useState({
         email: "",
         password: "",
+        name: "",
         profession: "",
         sex: "male",
         qualities: [],
@@ -27,6 +28,10 @@ const RegisterForm = () => {
     }));
     const [errors, setErrors] = useState({});
     const { professions } = useProfession();
+    const professionsList = professions.map((p) => ({
+        name: p.name,
+        value: p._id
+    }));
     const { signUp } = useAuth();
 
     const handleChange = (target) => {
@@ -51,6 +56,13 @@ const RegisterForm = () => {
             min: {
                 message: "Пароль должен содержать минимум 8 символов",
                 value: 8
+            }
+        },
+        name: {
+            isRequired: { message: "Имя обязательно" },
+            min: {
+                message: "Имя должно содержать минимум 3 символа",
+                value: 3
             }
         },
         profession: {
@@ -104,10 +116,17 @@ const RegisterForm = () => {
                 onChange={handleChange}
                 error={errors.password}
             />
+            <TextField
+                label="Name"
+                name="name"
+                value={data.name}
+                onChange={handleChange}
+                error={errors.name}
+            />
             <SelectField
                 label="Выбери профессию"
                 name="profession"
-                options={professions}
+                options={professionsList}
                 defaultOption="Choose..."
                 value={data.profession}
                 onChange={handleChange}

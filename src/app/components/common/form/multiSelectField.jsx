@@ -5,16 +5,17 @@ import PropTypes from "prop-types";
 const MultiSelectField = ({ options, onChange, name, label, defaultValue }) => {
     const optionArray =
         !Array.isArray(options) && typeof options === "object"
-            ? Object.keys(options).map(key => ({
+            ? Object.keys(options).map((key) => ({
                   label: options[key].name,
                   value: options[key]._id
               }))
             : options;
-    const defaultValueArray = defaultValue.map(value => ({
+    const defaultValueArray = defaultValue.map((value) => ({
         label: value.name,
         value: value._id
     }));
-    const handleChange = value => {
+    console.log(defaultValueArray);
+    const handleChange = (value) => {
         onChange({ name: name, value });
     };
     return (
