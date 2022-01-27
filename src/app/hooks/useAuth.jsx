@@ -66,35 +66,33 @@ const AuthProvider = ({ children }) => {
             }
         }
     }
-    async function upDate({ name, email, ...rest }) {
-        const url = `accounts:update`;
-        const idToken = localStorageService.getAccessToken();
-        console.log(currentUser);
-        try {
-            const { data } = await httpAuth.post(url, {
-                idToken,
-                name,
-                email
-            });
-            console.log(data);
-            await updateUser({
-                name,
-                email,
-                ...rest
-            });
-        } catch (error) {
-            errorCatcher(error);
-            const { code, message } = error.response.data.error;
-            if (code === 400) {
-                if (message === "EMAIL_EXISTS") {
-                    const errorObj = {
-                        email: " Пользователь с таким email уже существует"
-                    };
-                    throw errorObj;
-                }
-            }
-        }
-    }
+    // async function upDate({ name, email, ...rest }) {
+    //     const url = `accounts:update`;
+    //     const idToken = localStorageService.getAccessToken();
+    //     console.log(currentUser);
+    //     try {
+    //         const { data } = await httpAuth.post(url, {
+    //             idToken,
+    //             name,
+    //             email
+    //         });
+    //         console.log(data);
+    //         await updateUserData({
+    //             name,
+    //             email,
+    //             ...rest
+    //         });
+    //     } catch (error) {
+    //         errorCatcher(error);
+    //         const { code, message } = error.response.data.error;
+    //         if (code === 400) {
+    //             if (message === "EMAIL_EXISTS") {
+    //
+    //                 throw errorObj;
+    //             }
+    //         }
+    //     }
+    // }
     async function logIn({ email, password }) {
         const url = `accounts:signInWithPassword`;
         try {
@@ -139,7 +137,7 @@ const AuthProvider = ({ children }) => {
             errorCatcher(error);
         }
     }
-    async function updateUser(data) {
+    async function updateUserData(data) {
         try {
             const { content } = await userService.update(data);
             setUser(content);
@@ -175,7 +173,7 @@ const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ signUp, currentUser, logIn, logOut, upDate }}
+            value={{ signUp, currentUser, logIn, logOut, updateUserData }}
         >
             {!isLoading ? children : "loading... global)"}
         </AuthContext.Provider>
