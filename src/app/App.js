@@ -6,19 +6,19 @@ import Users from "./layouts/users";
 import Main from "./layouts/main";
 import { ToastContainer } from "react-toastify";
 import { ProfessionProvider } from "./hooks/useProffesion";
-import { QualityProvider } from "./hooks/useQuality";
 import AuthProvider from "./hooks/useAuth";
 import ProtectedRoute from "./components/common/protectedRoute";
 import LogOut from "./layouts/logOut";
+import AppLoader from "./components/ui/hoc/appLoader";
 
 const App = () => {
     return (
         <>
-            <AuthProvider>
-                <NavBar />
+            <AppLoader>
+                <AuthProvider>
+                    <NavBar />
 
-                <ProfessionProvider>
-                    <QualityProvider>
+                    <ProfessionProvider>
                         <Switch>
                             <ProtectedRoute
                                 path="/users/:userId?/:edit?"
@@ -29,9 +29,9 @@ const App = () => {
                             <Route exact path="/" component={Main} />
                             <Redirect to="/" />
                         </Switch>
-                    </QualityProvider>
-                </ProfessionProvider>
-            </AuthProvider>
+                    </ProfessionProvider>
+                </AuthProvider>
+            </AppLoader>
             <ToastContainer />
         </>
     );

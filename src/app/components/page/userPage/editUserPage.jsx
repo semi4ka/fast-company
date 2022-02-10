@@ -4,23 +4,31 @@ import TextField from "../../common/form/textField";
 import SelectField from "../../common/form/selectField";
 import RadioField from "../../common/form/radio.Field";
 import MultiSelectField from "../../common/form/multiSelectField";
-import { useHistory } from "react-router-dom";
 import BackHistoryButton from "../../common/backButton";
-import { useQuality } from "../../../hooks/useQuality";
-import { useProfession } from "../../../hooks/useProffesion";
-import { useAuth } from "../../../hooks/useAuth";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    getQualities,
+    getQualitiesLoadingStatus
+} from "../../../store/qualities";
+import {
+    getProfessions,
+    getProfLoadingStatus
+} from "../../../store/professions";
+import { getCurrentUserData, updateUserData } from "../../../store/users";
 
 const EditUserPage = () => {
     const [isLoading, setLoading] = useState(true);
-    const { updateUserData, currentUser } = useAuth();
-    const history = useHistory();
+    const currentUser = useSelector(getCurrentUserData());
+    const dispatch = useDispatch();
 
-    const { professions, isLoading: isLoadingProf } = useProfession();
-    const { qualities, isLoading: isLoadingQual } = useQuality();
+    const qualities = useSelector(getQualities());
+    const isLoadingQual = useSelector(getQualitiesLoadingStatus());
     const qualitiesList = qualities.map((q) => ({
         label: q.name,
         value: q._id
     }));
+    const professions = useSelector(getProfessions());
+    const isLoadingProf = useSelector(getProfLoadingStatus());
     const professionsList = professions.map((p) => ({
         name: p.name,
         value: p._id
@@ -91,15 +99,16 @@ const EditUserPage = () => {
     };
 
     const isValid = Object.keys(errors).length === 0;
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        await updateUserData({
-            ...data,
-            qualities: data.qualities.map((q) => q.value)
-        });
-        history.push(`/users/${currentUser._id}`);
+        dispatch(
+            updateUserData({
+                ...data,
+                qualities: data.qualities.map((q) => q.value)
+            })
+        );
     };
     return (
         <div className="container mt-5">
